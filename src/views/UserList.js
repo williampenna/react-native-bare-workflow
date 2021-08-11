@@ -1,38 +1,53 @@
 import React from 'react';
-import { FlatList, Text, View } from 'react-native';
+import { Alert, FlatList, Text, View } from 'react-native';
 import { ListItem, Avatar, Button, Icon } from 'react-native-elements';
-import TouchableScale from 'react-native-touchable-scale'; // https://github.com/kohver/react-native-touchable-scale
-import LinearGradient from 'react-native-linear-gradient';
+import { Ionicons } from '@expo/vector-icons';
 import users from '../data/users';
+import { color } from 'react-native-elements/dist/helpers';
 
 export default props => {
 
-    function getActions(user) {
-        return (
-            <ListItem.ButtonGroup
+    function confirmUserDeletion(user) {
+        Alert.alert('Excluir usuário', 'Deseja excluir o usuário?', [
+            {
+                text: 'Sim',
+                onPress: () => {
+                    console.warn('Delete ' + user.id)
+                }
+            },
+            {
+                text: 'Não'
+            }
+        ]);
+    }
 
+    function deleteButton(user) {
+        return (
+            <Button
+                icon={<Icon name="delete" size={25} color="red" />}
+                type="clear"
+                onPress={() => confirmUserDeletion(user)}
             />
-            // <Button
-            //     onPress={() => props.navigation.navigate('UserForm', { user })}
-            //     type="clear"
-            //     icon={<Icon name="edit" size={25} color="orange" />}
-            // />
-        )
+        );
+    }
+
+    function editButton(user) {
+        return (
+            <Button
+                icon={<Icon name="edit" size={25} color="orange" />}
+                type="clear"
+                onPress={() => props.navigation.navigate('UserForm', user)}
+            />
+        );
     }
 
     function rightButtons(user) {
-        return (
-            <Button
-                onPress={() => props.navigation.navigate('UserForm', { user })}
-                type="clear"
-                icon={<Icon name="edit" size={25} color="orange" />}
-            />
-        )
+        return [editButton(user), deleteButton(user)];
     }
 
     function getUserItem ({ item: user }) {
         return (
-            <ListItem key={user.id} bottomDivider rightIcon={<Icon name="edit" size={25} color="orange" />}>
+            <ListItem key={user.id} bottomDivider>
                 <Avatar source={{uri: user.avatarUrl}} rounded/>
                 <ListItem.Content>
                     <ListItem.Title>{user.name}</ListItem.Title>
